@@ -16,6 +16,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
+#include <filesystem>
 #include <string>
 #include <vector>
 
@@ -65,6 +66,27 @@ static bool LoadSvgToTexture(const char* path, int w, int h, GLuint& outTex)
     if (!bmp.valid() || !bmp.data()) return false;
     outTex = MakeTextureRGBA(bmp.data(), static_cast<int>(bmp.width()), static_cast<int>(bmp.height()));
     return outTex != 0;
+}
+
+static std::string ExeDir()
+{
+#ifdef _WIN32
+    char buf[1024]{};
+    const DWORD n = GetModuleFileNameA(nullptr, buf, static_cast<DWORD>(sizeof(buf)));
+    if (n == 0 || n >= sizeof(buf)) return ".";
+    return std::filesystem::path(buf).parent_path().string();
+#else
+    return ".";
+#endif
+}
+
+static std::string ResolveAsset(const std::string& fileName, const char* fallbackAbs)
+{
+    const std::filesystem::path p1 = std::filesystem::path(ExeDir()) / fileName;
+    if (std::filesystem::exists(p1)) return p1.string();
+    const std::filesystem::path p2 = std::filesystem::path(fileName);
+    if (std::filesystem::exists(p2)) return p2.string();
+    return fallbackAbs ? std::string(fallbackAbs) : std::string();
 }
 
 static void SetProceduralIcon(GLFWwindow* window)
@@ -146,7 +168,8 @@ static int AppMain()
 
     io.Fonts->Clear();
 #ifdef _WIN32
-    if (io.Fonts->AddFontFromFileTTF(u8"C:\\Users\\seat\\Downloads\\Новая папка\\Meltaface\\Meltaface regular.ttf", 24.0f, nullptr, io.Fonts->GetGlyphRangesCyrillic()) == nullptr)
+    const std::string meltaPath = ResolveAsset("Meltaface regular.ttf", u8"C:\\Users\\seat\\Downloads\\Новая папка\\Meltaface\\Meltaface regular.ttf");
+    if (io.Fonts->AddFontFromFileTTF(meltaPath.c_str(), 24.0f, nullptr, io.Fonts->GetGlyphRangesCyrillic()) == nullptr)
         io.Fonts->AddFontDefault();
 #else
     io.Fonts->AddFontDefault();
@@ -166,11 +189,11 @@ static int AppMain()
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(nullptr);
 
-    const char* bgPath = "C:\\Users\\seat\\Downloads\\background_2.svg";
+    const std::string bgPath = ResolveAsset("background_2.svg", "C:\\Users\\seat\\Downloads\\background_2.svg");
     GLuint bgTex = 0;
     int fbw = 0, fbh = 0;
     glfwGetFramebufferSize(window, &fbw, &fbh);
-    (void)LoadSvgToTexture(bgPath, fbw > 0 ? fbw : 920, fbh > 0 ? fbh : 650, bgTex);
+    (void)LoadSvgToTexture(bgPath.c_str(), fbw > 0 ? fbw : 920, fbh > 0 ? fbh : 650, bgTex);
 
     const std::array<int, 4> expected = { ((0x2B ^ 0x29) & 0xF), ((0x71 ^ 0x76) & 0xF), ((0x10 ^ 0x11) & 0xF), ((0x38 ^ 0x30) & 0xF) };
     // Проверяем только интервалы МЕЖДУ цифрами: 2->7, 7->1, 1->8.

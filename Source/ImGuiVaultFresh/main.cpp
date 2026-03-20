@@ -15,6 +15,7 @@
 #include <cstdio>
 #include <cstdint>
 #include <cstring>
+#include <filesystem>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -139,6 +140,27 @@ static bool LoadSvgToTexture(const char* path, int w, int h, GLuint& outTex)
     return outTex != 0;
 }
 
+static std::string ExeDir()
+{
+#ifdef _WIN32
+    char buf[1024]{};
+    const DWORD n = GetModuleFileNameA(nullptr, buf, static_cast<DWORD>(sizeof(buf)));
+    if (n == 0 || n >= sizeof(buf)) return ".";
+    return std::filesystem::path(buf).parent_path().string();
+#else
+    return ".";
+#endif
+}
+
+static std::string ResolveAsset(const std::string& fileName, const char* fallbackAbs)
+{
+    const std::filesystem::path p1 = std::filesystem::path(ExeDir()) / fileName;
+    if (std::filesystem::exists(p1)) return p1.string();
+    const std::filesystem::path p2 = std::filesystem::path(fileName);
+    if (std::filesystem::exists(p2)) return p2.string();
+    return fallbackAbs ? std::string(fallbackAbs) : std::string();
+}
+
 static void SetProceduralIcon(GLFWwindow* window)
 {
     // Иконка в стиле второго скрина (белый символ на чёрном фоне).
@@ -218,8 +240,9 @@ static int AppMain()
     io.IniFilename = nullptr;
     io.Fonts->Clear();
 #ifdef _WIN32
-    // Единый шрифт для ВСЕГО интерфейса.
-    if (io.Fonts->AddFontFromFileTTF(u8"C:\\Users\\seat\\Downloads\\Новая папка\\Meltaface\\Meltaface regular.ttf", 24.0f, nullptr, io.Fonts->GetGlyphRangesCyrillic()) == nullptr)
+    // Сначала ищем шрифт рядом с exe, потом fallback на абсолютный путь.
+    const std::string meltaPath = ResolveAsset("Meltaface regular.ttf", u8"C:\\Users\\seat\\Downloads\\Новая папка\\Meltaface\\Meltaface regular.ttf");
+    if (io.Fonts->AddFontFromFileTTF(meltaPath.c_str(), 24.0f, nullptr, io.Fonts->GetGlyphRangesCyrillic()) == nullptr)
     {
         // Fallback на системный шрифт, если пользовательский путь недоступен.
         if (io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\segoeui.ttf", 18.0f, nullptr, io.Fonts->GetGlyphRangesCyrillic()) == nullptr)
@@ -257,12 +280,12 @@ static int AppMain()
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(nullptr);
 
-    // Фон из SVG (если файл доступен).
-    const char* bgPath = "C:\\Users\\seat\\Downloads\\background_2.svg";
+    // Фон из SVG: сначала рядом с exe, потом fallback.
+    const std::string bgPath = ResolveAsset("background_2.svg", "C:\\Users\\seat\\Downloads\\background_2.svg");
     GLuint bgTex = 0;
     int fbw = 0, fbh = 0;
     glfwGetFramebufferSize(window, &fbw, &fbh);
-    (void)LoadSvgToTexture(bgPath, fbw > 0 ? fbw : 920, fbh > 0 ? fbh : 650, bgTex);
+    (void)LoadSvgToTexture(bgPath.c_str(), fbw > 0 ? fbw : 920, fbh > 0 ? fbh : 650, bgTex);
 
     int attempts = 3;
     char pin[5] = {};

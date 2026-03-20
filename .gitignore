@@ -1,0 +1,9 @@
+**/build/
+**/.vs/
+**/x64/
+*.suo
+*.user
+*.db
+*.VC.db
+*.exe
+vault.dat

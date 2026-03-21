@@ -1,7 +1,16 @@
 **/build/
 **/build_embed_test/
+**/out/
 **/.vs/
 **/x64/
+**/CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+_deps/
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.slnx
 *.suo
 *.user
 *.db

@@ -33,6 +33,7 @@ find_package(OpenGL REQUIRED)
 
 add_executable(timing_gate WIN32
   main.cpp
+  app.cpp
   ${imgui_SOURCE_DIR}/imgui.cpp
   ${imgui_SOURCE_DIR}/imgui_draw.cpp
   ${imgui_SOURCE_DIR}/imgui_tables.cpp

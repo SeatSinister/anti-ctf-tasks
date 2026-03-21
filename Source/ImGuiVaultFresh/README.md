@@ -2,6 +2,8 @@
 
 CTF-приложение "ImGui Vault" на `Dear ImGui + GLFW + OpenGL3`.
 
+Исходники: `main.cpp` (точка входа), `app.h` / `app.cpp` (логика).
+
 **Текст задания для участников:** [`CTF_TASK_STATEMENTS.md`](../../CTF_TASK_STATEMENTS.md).  
 **Проверка (спойлеры):** [`TEACHER_VERIFICATION.md`](../../TEACHER_VERIFICATION.md).
 

@@ -1,4 +1,5 @@
 **/build/
+**/build_embed_test/
 **/.vs/
 **/x64/
 *.suo

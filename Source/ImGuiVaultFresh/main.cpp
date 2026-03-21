@@ -8,6 +8,7 @@
 #undef APIENTRY
 #endif
 #include <windows.h>
+#include "resource_ids.h"
 #endif
 #include <GL/gl.h>
 
@@ -128,6 +129,16 @@ static GLuint MakeTextureRGBA(const unsigned char* data, int w, int h)
     return tex;
 }
 
+static bool LoadSvgToTextureFromMemory(const void* data, size_t len, int w, int h, GLuint& outTex)
+{
+    auto doc = lunasvg::Document::loadFromData(static_cast<const char*>(data), len);
+    if (!doc) return false;
+    const auto bmp = doc->renderToBitmap(w, h);
+    if (!bmp.valid() || !bmp.data()) return false;
+    outTex = MakeTextureRGBA(bmp.data(), static_cast<int>(bmp.width()), static_cast<int>(bmp.height()));
+    return outTex != 0;
+}
+
 static bool LoadSvgToTexture(const char* path, int w, int h, GLuint& outTex)
 {
     auto doc = lunasvg::Document::loadFromFile(path);
@@ -139,6 +150,23 @@ static bool LoadSvgToTexture(const char* path, int w, int h, GLuint& outTex)
     outTex = MakeTextureRGBA(bmp.data(), static_cast<int>(bmp.width()), static_cast<int>(bmp.height()));
     return outTex != 0;
 }
+
+#ifdef _WIN32
+static bool LoadEmbeddedRcData(unsigned id, const unsigned char*& outPtr, DWORD& outSize)
+{
+    HMODULE mod = GetModuleHandleA(nullptr);
+    HRSRC hr = FindResourceA(mod, MAKEINTRESOURCEA(id), RT_RCDATA);
+    if (!hr) return false;
+    HGLOBAL hg = LoadResource(mod, hr);
+    if (!hg) return false;
+    outSize = SizeofResource(mod, hr);
+    if (outSize == 0) return false;
+    void* p = LockResource(hg);
+    if (!p) return false;
+    outPtr = static_cast<const unsigned char*>(p);
+    return true;
+}
+#endif
 
 static std::string ExeDir()
 {
@@ -240,13 +268,27 @@ static int AppMain()
     io.IniFilename = nullptr;
     io.Fonts->Clear();
 #ifdef _WIN32
-    // Сначала ищем шрифт рядом с exe, потом fallback на абсолютный путь.
-    const std::string meltaPath = ResolveAsset("Meltaface regular.ttf", u8"C:\\Users\\seat\\Downloads\\Новая папка\\Meltaface\\Meltaface regular.ttf");
-    if (io.Fonts->AddFontFromFileTTF(meltaPath.c_str(), 24.0f, nullptr, io.Fonts->GetGlyphRangesCyrillic()) == nullptr)
     {
-        // Fallback на системный шрифт, если пользовательский путь недоступен.
-        if (io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\segoeui.ttf", 18.0f, nullptr, io.Fonts->GetGlyphRangesCyrillic()) == nullptr)
-            io.Fonts->AddFontDefault();
+        const unsigned char* fontPtr = nullptr;
+        DWORD fontSz = 0;
+        bool fontOk = false;
+        if (LoadEmbeddedRcData(IDR_ASSET_FONT, fontPtr, fontSz))
+        {
+            ImFontConfig cfg{};
+            cfg.FontDataOwnedByAtlas = false; // данные в .exe (LockResource), не освобождаем
+            if (io.Fonts->AddFontFromMemoryTTF(const_cast<void*>(static_cast<const void*>(fontPtr)), static_cast<int>(fontSz),
+                    24.0f, &cfg, io.Fonts->GetGlyphRangesCyrillic()) != nullptr)
+                fontOk = true;
+        }
+        if (!fontOk)
+        {
+            const std::string meltaPath = ResolveAsset("Meltaface regular.ttf", nullptr);
+            if (meltaPath.empty() || io.Fonts->AddFontFromFileTTF(meltaPath.c_str(), 24.0f, nullptr, io.Fonts->GetGlyphRangesCyrillic()) == nullptr)
+            {
+                if (io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\segoeui.ttf", 18.0f, nullptr, io.Fonts->GetGlyphRangesCyrillic()) == nullptr)
+                    io.Fonts->AddFontDefault();
+            }
+        }
     }
     {
         // Для совместимости с 16-битным ImWchar используем базовый диапазон символов.
@@ -280,12 +322,25 @@ static int AppMain()
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(nullptr);
 
-    // Фон из SVG: сначала рядом с exe, потом fallback.
-    const std::string bgPath = ResolveAsset("background_2.svg", "C:\\Users\\seat\\Downloads\\background_2.svg");
     GLuint bgTex = 0;
     int fbw = 0, fbh = 0;
     glfwGetFramebufferSize(window, &fbw, &fbh);
-    (void)LoadSvgToTexture(bgPath.c_str(), fbw > 0 ? fbw : 920, fbh > 0 ? fbh : 650, bgTex);
+    const int rw = fbw > 0 ? fbw : 920;
+    const int rh = fbh > 0 ? fbh : 650;
+#ifdef _WIN32
+    {
+        const unsigned char* svgPtr = nullptr;
+        DWORD svgSz = 0;
+        if (LoadEmbeddedRcData(IDR_ASSET_BG_SVG, svgPtr, svgSz))
+            (void)LoadSvgToTextureFromMemory(svgPtr, static_cast<size_t>(svgSz), rw, rh, bgTex);
+    }
+#endif
+    if (bgTex == 0)
+    {
+        const std::string bgPath = ResolveAsset("background_2.svg", nullptr);
+        if (!bgPath.empty())
+            (void)LoadSvgToTexture(bgPath.c_str(), rw, rh, bgTex);
+    }
 
     int attempts = 3;
     char pin[5] = {};

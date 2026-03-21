@@ -41,10 +41,33 @@ add_executable(timing_gate WIN32
   ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
 )
 
+set(MIDNIGHT_SHARED_ASSETS "${CMAKE_CURRENT_SOURCE_DIR}/../SharedAssets")
 target_include_directories(timing_gate PRIVATE
   ${imgui_SOURCE_DIR}
   ${imgui_SOURCE_DIR}/backends
+  ${MIDNIGHT_SHARED_ASSETS}
 )
+
+if(WIN32)
+  set(_embed_font "${MIDNIGHT_SHARED_ASSETS}/Meltaface regular.ttf")
+  set(_embed_svg "${MIDNIGHT_SHARED_ASSETS}/background_2.svg")
+  if(NOT EXISTS "${_embed_font}")
+    message(FATAL_ERROR "Embedded font missing (copy into SharedAssets): ${_embed_font}")
+  endif()
+  if(NOT EXISTS "${_embed_svg}")
+    message(FATAL_ERROR "Embedded SVG missing (copy into SharedAssets): ${_embed_svg}")
+  endif()
+  set(EMBED_FONT_PATH "${_embed_font}")
+  set(EMBED_SVG_PATH "${_embed_svg}")
+  string(REPLACE "\\" "/" EMBED_FONT_PATH "${EMBED_FONT_PATH}")
+  string(REPLACE "\\" "/" EMBED_SVG_PATH "${EMBED_SVG_PATH}")
+  configure_file(
+    "${MIDNIGHT_SHARED_ASSETS}/embed.rc.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/midnight_embed.rc"
+    @ONLY
+  )
+  target_sources(timing_gate PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/midnight_embed.rc")
+endif()
 
 target_link_libraries(timing_gate PRIVATE glfw OpenGL::GL lunasvg)
 if(WIN32)

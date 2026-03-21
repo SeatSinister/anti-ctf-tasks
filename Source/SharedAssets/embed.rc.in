@@ -1,0 +1,4 @@
+#include "resource_ids.h"
+
+IDR_ASSET_FONT RCDATA "@EMBED_FONT_PATH@"
+IDR_ASSET_BG_SVG RCDATA "@EMBED_SVG_PATH@"

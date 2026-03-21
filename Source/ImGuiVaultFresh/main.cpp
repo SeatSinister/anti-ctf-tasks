@@ -22,9 +22,6 @@
 #include <vector>
 #include <cstdlib>
 
-// ===============================
-// Русские строки в Unicode-escape (чтобы не зависеть от кодировки файла)
-// ===============================
 static constexpr const char* RU_WINDOW_TITLE = u8"\u0421\u0435\u0439\u0444 Vault";
 static constexpr const char* RU_ATTEMPTS_FMT = u8"\u041e\u0441\u0442\u0430\u043b\u043e\u0441\u044c \u043f\u043e\u043f\u044b\u0442\u043e\u043a: %d";
 static constexpr const char* RU_PIN_LABEL = u8"PIN-\u043a\u043e\u0434";
@@ -43,9 +40,6 @@ static constexpr const char* RU_LOCK_TITLE = u8"\u26A0\uFE0F \u0421\u0418\u0421\
 static constexpr const char* RU_LOCK_DESC = u8"\u0410\u0432\u0430\u0440\u0438\u0439\u043d\u043e\u0435 \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043d\u0438\u0435 \u0447\u0435\u0440\u0435\u0437 %.1f \u0441...";
 static constexpr const char* CTF_TASK_NAME = "# ImGui Vault";
 
-// ===============================
-// Обфускация строк (чтобы их нельзя было просто вытащить через strings)
-// ===============================
 static constexpr uint8_t kKey = 0x5A;
 static std::string Dec(const uint8_t* e, size_t n)
 {
@@ -65,7 +59,6 @@ static constexpr uint8_t kSHintLAlt[] = { 0x02, 0x15, 0x08, 0x7A, 0x31, 0x3F, 0x
 static constexpr uint8_t kSHintMAlt[] = { 0x3C, 0x35, 0x28, 0x37, 0x3B, 0x2E, 0x60, 0x7A, 0x08, 0x3F, 0x2E, 0x28, 0x23 };
 static constexpr uint8_t kSHintRAlt[] = { 0x0A, 0x13, 0x14, 0x60, 0x7A, 0x6E, 0x68, 0x6E, 0x68 };
 
-// Набор PIN-профилей: после каждого сбоя выбирается новый профиль.
 static constexpr int kFakePins[] = { 1337, 4242, 8080, 2718, 5150, 6060, 7331, 9901 };
 static constexpr int kRealPins[] = { 1957, 1492, 1789, 1066, 1917, 2049, 1221, 1605 };
 static constexpr uint8_t kCrashKeys[] = { 0x24, 0x2A, 0x31, 0x17, 0x24, 0x2A, 0x31, 0x17 };
@@ -143,8 +136,6 @@ static bool LoadSvgToTexture(const char* path, int w, int h, GLuint& outTex)
 {
     auto doc = lunasvg::Document::loadFromFile(path);
     if (!doc) return false;
-
-    // Рендерим SVG в RGBA bitmap.
     const auto bmp = doc->renderToBitmap(w, h);
     if (!bmp.valid() || !bmp.data()) return false;
     outTex = MakeTextureRGBA(bmp.data(), static_cast<int>(bmp.width()), static_cast<int>(bmp.height()));
@@ -191,7 +182,6 @@ static std::string ResolveAsset(const std::string& fileName, const char* fallbac
 
 static void SetProceduralIcon(GLFWwindow* window)
 {
-    // Иконка в стиле второго скрина (белый символ на чёрном фоне).
     const int w = 64, h = 64;
     std::vector<unsigned char> px(static_cast<size_t>(w * h * 4), 0);
     auto put = [&](int x, int y, unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
@@ -275,7 +265,7 @@ static int AppMain()
         if (LoadEmbeddedRcData(IDR_ASSET_FONT, fontPtr, fontSz))
         {
             ImFontConfig cfg{};
-            cfg.FontDataOwnedByAtlas = false; // данные в .exe (LockResource), не освобождаем
+            cfg.FontDataOwnedByAtlas = false;
             if (io.Fonts->AddFontFromMemoryTTF(const_cast<void*>(static_cast<const void*>(fontPtr)), static_cast<int>(fontSz),
                     24.0f, &cfg, io.Fonts->GetGlyphRangesCyrillic()) != nullptr)
                 fontOk = true;
@@ -291,7 +281,6 @@ static int AppMain()
         }
     }
     {
-        // Для совместимости с 16-битным ImWchar используем базовый диапазон символов.
         static const ImWchar ranges[] = { 0x2600, 0x27BF, 0 };
         ImFontConfig cfg{};
         cfg.MergeMode = true;
@@ -301,8 +290,6 @@ static int AppMain()
     io.Fonts->AddFontDefault();
 #endif
     ImGui::StyleColorsDark();
-
-    // Чёрный стиль + КРАСНЫЕ акценты (по запросу).
     ImGuiStyle& st = ImGui::GetStyle();
     st.Colors[ImGuiCol_WindowBg] = wasCrashed ? ImVec4(0.05f, 0.0f, 0.0f, 1) : ImVec4(0, 0, 0, 1);
     st.Colors[ImGuiCol_TitleBg] = wasCrashed ? ImVec4(0.28f, 0.06f, 0.07f, 1.0f) : ImVec4(0.22f, 0.05f, 0.06f, 1.0f);
@@ -409,7 +396,6 @@ static int AppMain()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        // Кастомный фон: рисуем SVG как полноэкранную текстуру.
         if (bgTex != 0)
         {
             ImGui::SetNextWindowPos(ImVec2(0, 0));
@@ -423,7 +409,6 @@ static int AppMain()
             const ImVec2 p0 = ImGui::GetWindowPos();
             const ImVec2 p1 = ImVec2(p0.x + io.DisplaySize.x, p0.y + io.DisplaySize.y);
             bg->AddImage((ImTextureID)(intptr_t)bgTex, p0, p1);
-            // Лёгкое затемнение поверх, чтобы интерфейс читался.
             bg->AddRectFilled(p0, p1, IM_COL32(0, 0, 0, 125));
             ImGui::End();
         }
@@ -447,7 +432,6 @@ static int AppMain()
         if (ImGui::IsWindowAppearing())
             ImGui::SetKeyboardFocusHere(-1);
 
-        // Резервный ввод через экранную клавиатуру (если не работает фокус/раскладка).
         auto appendDigit = [&](char d)
         {
             const size_t len = std::strlen(pin);

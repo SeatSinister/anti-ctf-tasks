@@ -119,7 +119,6 @@ static std::string ResolveAsset(const std::string& fileName, const char* fallbac
 
 static void SetProceduralIcon(GLFWwindow* window)
 {
-    // Иконка в стиле синего круглого эмблемного значка.
     const int w = 64, h = 64;
     std::vector<unsigned char> px(static_cast<size_t>(w * h * 4), 0);
     auto put = [&](int x, int y, unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
@@ -141,7 +140,6 @@ static void SetProceduralIcon(GLFWwindow* window)
             if (d > 12.0f && d < 13.4f) put(x, y, 120, 70, 255, 255);
         }
     }
-    // Центральный ромб.
     for (int y = 18; y <= 46; ++y)
     {
         const int t = std::abs(32 - y);
@@ -149,7 +147,6 @@ static void SetProceduralIcon(GLFWwindow* window)
         for (int x = 32 - half; x <= 32 + half; ++x)
             put(x, y, 30, 220, 255, 255);
     }
-    // Оранжевая V-форма.
     for (int i = 0; i < 18; ++i)
     {
         put(22 + i, 22 + i, 255, 150, 30, 255);
@@ -165,7 +162,6 @@ static void SetProceduralIcon(GLFWwindow* window)
     glfwSetWindowIcon(window, 1, &icon);
 }
 
-// "archive checksum mismatch: 9f2a7b13"
 static constexpr uint8_t kFakeFlag[] = {
     0x3b,0x28,0x39,0x32,0x33,0x2c,0x3f,0x7a,0x39,0x32,0x3f,0x39,0x31,0x29,0x2f,0x37,0x7a,
     0x37,0x33,0x29,0x37,0x3b,0x2e,0x39,0x32,0x60,0x7a,0x63,0x3c,0x68,0x3b,0x6d,0x38,0x6b,0x69
@@ -203,7 +199,7 @@ static int AppMain()
         if (LoadEmbeddedRcData(IDR_ASSET_FONT, fontPtr, fontSz))
         {
             ImFontConfig cfg{};
-            cfg.FontDataOwnedByAtlas = false; // данные в .exe (LockResource), не освобождаем
+            cfg.FontDataOwnedByAtlas = false;
             if (io.Fonts->AddFontFromMemoryTTF(const_cast<void*>(static_cast<const void*>(fontPtr)), static_cast<int>(fontSz),
                     24.0f, &cfg, io.Fonts->GetGlyphRangesCyrillic()) != nullptr)
                 fontOk = true;
@@ -254,7 +250,6 @@ static int AppMain()
     }
 
     const std::array<int, 4> expected = { ((0x2B ^ 0x29) & 0xF), ((0x71 ^ 0x76) & 0xF), ((0x10 ^ 0x11) & 0xF), ((0x38 ^ 0x30) & 0xF) };
-    // Проверяем только интервалы МЕЖДУ цифрами: 2->7, 7->1, 1->8.
     const std::array<int, 4> minMs = { 0, 260, 120, 340 };
     const std::array<int, 4> maxMs = { 9999, 520, 280, 700 };
 

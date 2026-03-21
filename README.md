@@ -1,4 +1,4 @@
-# Задания anti-CTF
+# -_0 Задания anti-CTF
 
 Два таска под Windows: сейф **ImGui Vault** и **Timing Gate** (ритм + FSM).
 
@@ -13,13 +13,4 @@
 - `Source/ImGuiVaultFresh/` — сейф
 - `Source/TimingGateFSM/` — тайминг-таск
 - `Source/SharedAssets/` — шрифт, фон, rc для вшивания в exe
-
-Репо: https://github.com/SeatSinister/anti-ctf-tasks
-
----
-
-### Откуда исходники
-
-Нужны только папки `Source/...` выше. То, что CMake и Visual Studio накидывают (vcxproj, CMakeCache, `_deps`, Debug/Release) — это сборка, её в git не кладут, у каждого своя появится после cmake.
-
-Скачать проект: на GitHub **Code → Download ZIP**.
+- 

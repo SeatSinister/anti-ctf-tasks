@@ -13,4 +13,3 @@
 - `Source/ImGuiVaultFresh/` — сейф
 - `Source/TimingGateFSM/` — тайминг-таск
 - `Source/SharedAssets/` — шрифт, фон, rc для вшивания в exe
-- 

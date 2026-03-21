@@ -1,31 +1,24 @@
-## Timing Gate FSM (сложный anti-CTF таск #2)
+## Timing Gate FSM
 
-GUI-версия на Dear ImGui (единый стиль с `ImGuiVaultFresh`), без проблем кодировки консоли.
+Та же связка ImGui + GLFW + OpenGL, что и у Vault.
 
-Исходники: `main.cpp` (точка входа), `app.h` / `app.cpp` (логика).
+Файлы: `main.cpp`, `app.cpp`, `app.h`.
 
-Проверяется:
-- корректная **последовательность** цифр (см. условие в [`CTF_TASK_STATEMENTS.md`](../../CTF_TASK_STATEMENTS.md)),
-- корректный **ритм** (тайминги между четырьмя нажатиями после старта сессии).
+Нужны правильные цифры и правильные паузы между нажатиями после старта. Подробности в [CTF_TASK_STATEMENTS.md](../../CTF_TASK_STATEMENTS.md).  
+Ответы: [TEACHER_VERIFICATION.md](../../TEACHER_VERIFICATION.md).
 
-Если последовательность верная, но ритм неверный, возможен сценарий «почти успех» с **фейковым** флагом.
-
-Эталон проверки для преподавателя — [`TEACHER_VERIFICATION.md`](../../TEACHER_VERIFICATION.md) (спойлеры).
-
-### Сборка (Windows)
+### Windows
 
 ```bat
 cmake -S "Source\TimingGateFSM" -B "Source\TimingGateFSM\build"
 cmake --build "Source\TimingGateFSM\build" --config Release --target timing_gate
 ```
 
-### Запуск (Windows)
-
 ```bat
 .\Source\TimingGateFSM\build\Release\timing_gate.exe
 ```
 
-### Сборка/запуск (Linux)
+### Linux
 
 ```bash
 cmake -S Source/TimingGateFSM -B Source/TimingGateFSM/build -DCMAKE_BUILD_TYPE=Release
@@ -33,8 +26,4 @@ cmake --build Source/TimingGateFSM/build --target timing_gate
 ./Source/TimingGateFSM/build/timing_gate
 ```
 
-### Почему это anti-LLM
-
-- Нельзя решить только статическим чтением PIN.
-- Нужен правильный ритм реальных нажатий.
-- Есть обманка: “почти успех” с фейковым флагом.
+Без выдерживания пауз один только реверс по коду не спасёт — нужны реальные нажатия с таймингом.

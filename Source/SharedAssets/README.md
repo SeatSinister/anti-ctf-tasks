@@ -1,8 +1,5 @@
-# Shared assets (Windows embed)
+# Общие ресурсы
 
-Файлы в этой папке линкуются в `.exe` как `RCDATA` через `embed.rc.in` (см. CMake в `ImGuiVaultFresh` и `TimingGateFSM`).
+Сюда лежат `Meltaface regular.ttf` и `background_2.svg`. CMake через `embed.rc.in` вшивает их в exe на Windows.
 
-- `Meltaface regular.ttf`
-- `background_2.svg`
-
-Без них конфигурация CMake завершится с ошибкой — положите копии сюда перед сборкой.
+Без этих файлов cmake упадёт — положи копии сюда перед сборкой.

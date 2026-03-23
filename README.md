@@ -10,6 +10,9 @@
 ![](docs/screenshots/vault_fresh.png)  
 *ImGui Vault (`vault_fresh.exe`)*
 
+![](docs/screenshots/void_config.png)  
+*VOID CONFIG (`eclipse_config.exe`) — Task 3*
+
 Ссылки:
 - Условия для людей, которые решают: [CTF_TASK_STATEMENTS.md](CTF_TASK_STATEMENTS.md)
 - Короткая версия под Word: [ANTIctf.md](ANTIctf.md)

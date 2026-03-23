@@ -5,10 +5,10 @@
 ### Скриншоты
 
 ![](docs/screenshots/timing_gate.png)  
-*Timing Gate (`timing_gate.exe`)*
+*Timing Gate (`timing_gate.exe`) — Task 1*
 
 ![](docs/screenshots/vault_fresh.png)  
-*ImGui Vault (`vault_fresh.exe`)*
+*ImGui Vault (`vault_fresh.exe`) — Task 2*
 
 ![](docs/screenshots/void_config.png)  
 *VOID CONFIG (`eclipse_config.exe`) — Task 3*

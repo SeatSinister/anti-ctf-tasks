@@ -17,3 +17,13 @@ _deps/
 *.VC.db
 *.exe
 vault.dat
+
+*.tlog
+*.lastbuildstate
+*.log
+*.pdb
+*.obj
+*.idb
+
+# GitHub: >100MB по обычному git. Эти архивы не нужны для исходников/задач.
+**/МОИ ИМГУИ/**/*.rar

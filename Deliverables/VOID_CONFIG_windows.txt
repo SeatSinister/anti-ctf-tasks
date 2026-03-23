@@ -1,0 +1,9 @@
+Placeholder for Task 3 package.
+
+Expected archive name:
+- VOID_CONFIG_windows.zip
+
+Contents should include:
+- eclipse_config.exe
+- brief run/readme note
+

@@ -1,4 +1,4 @@
-## Eclipse Config
+## Eclipse Config (Task 3, simplified)
 
 Конфигуратор «чит-меню» в стиле ImGui. Флаг появляется только при **скрытой комбинации** настроек. Anti‑LLM: нужно реально покликать в интерфейсе и подобрать значения, а не только статически анализировать код.
 
@@ -28,6 +28,6 @@ cmake --build "Source\EclipseConfig\build" --config Release --target eclipse_con
 - Tab: **Rage Aim**
 - Enable: **ON**
 - FOV: **271**
-- Mode: **Phase 3**
+- Mode: **Full**
 
 Флаги в коде замаскированы XOR 0x5A, `strings` даёт только обфусцированные байты.

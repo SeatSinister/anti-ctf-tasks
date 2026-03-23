@@ -7,6 +7,7 @@
 
 - `ImGuiVaultFresh_windows.zip`
 - `RhythmForensics_windows.zip`
+- `VOID_CONFIG_windows.zip` (3-е задание)
 
 Как запустить: распаковать, запустить exe.
 

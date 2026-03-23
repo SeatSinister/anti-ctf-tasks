@@ -1,6 +1,6 @@
 Assessment of build issues after C++ Build Tools upgrade
 
-Solution: E:\midnightCrck\МОИ ИМГУИ\ImGui-Cheat-Menu-master\imgui dx11 3.sln
+Solution: E:\midnightCrck\Task-03-VOID-CONFIG\imgui dx11 3.sln
 
 Summary:
 - Total projects affected: 1
@@ -9,7 +9,7 @@ Summary:
 
 In-scope (to be fixed now):
 1) Error (must fix first)
-   - File: E:\midnightCrck\МОИ ИМГУИ\ImGui-Cheat-Menu-master\main.cpp
+   - File: E:\midnightCrck\Task-03-VOID-CONFIG\main.cpp
    - Location: (14, 10)
    - Message: C1083: Не удается открыть файл включение: d3dx9tex.h: No such file or directory
    - Notes / Suggested fixes:
@@ -19,14 +19,14 @@ In-scope (to be fixed now):
      - I will not modify third-party code without confirmation; if you prefer installing the SDK, provide confirmation and I will re-run the build and continue.
 
 2) Warning (syntax) — addressable now
-   - File: E:\midnightCrck\МОИ ИМГУИ\ImGui-Cheat-Menu-master\main.cpp
+   - File: E:\midnightCrck\Task-03-VOID-CONFIG\main.cpp
    - Location: (6, 34)
    - Message: C4081 требуется "идентификатор"; обнаружен "константа"
    - Notes / Suggested fix:
      - Needs inspection of the source at the reported position. Likely a malformed macro, stray comma/semicolon, or non-identifier token. I will open the file, locate the exact token, and fix the syntax.
 
 3) Warning (lossy conversion)
-   - File: E:\midnightCrck\МОИ ИМГУИ\ImGui-Cheat-Menu-master\imgui\imgui_widgets.cpp
+   - File: E:\midnightCrck\Task-03-VOID-CONFIG\imgui\imgui_widgets.cpp
    - Location: (5881, 153)
    - Message: C4244 аргумент: преобразование "float" в "int", возможна потеря данных
    - Notes / Suggested fix:

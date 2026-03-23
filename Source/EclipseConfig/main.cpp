@@ -78,7 +78,7 @@ static int AppMain() {
 
     const bool needEnable = true;
     const int needSlider = 271;
-    const int needCombo = 3;
+    const int needCombo = 4;
     const int needTab = Rage;
 
     while (!glfwWindowShouldClose(w)) {

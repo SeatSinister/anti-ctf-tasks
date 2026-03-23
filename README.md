@@ -1,6 +1,6 @@
 # Задания anti-CTF
 
-Два таска под Windows: сейф **ImGui Vault** и **Timing Gate** (ритм + FSM).
+Три таска под Windows: **Timing Gate**, **ImGui Vault** и **VOID CONFIG** (3-е задание).
 
 ### Скриншоты
 
@@ -22,4 +22,11 @@
 Код:
 - `Source/ImGuiVaultFresh/` — сейф
 - `Source/TimingGateFSM/` — тайминг-таск
+- `Source/EclipseConfig/` — упрощённый кроссплатформенный вариант 3-го задания
+- `Task-03-VOID-CONFIG/` — основной DirectX 11 вариант 3-го задания
 - `Source/SharedAssets/` — шрифт, фон, rc для вшивания в exe
+
+Deliverables:
+- `Deliverables/ImGuiVaultFresh_windows.zip`
+- `Deliverables/RhythmForensics_windows.zip`
+- `Deliverables/VOID_CONFIG_windows.zip`
